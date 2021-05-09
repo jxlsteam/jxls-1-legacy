@@ -52,31 +52,13 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  <mailingLists>
-    <mailingList>
-      <name>jxls-user</name>
-      <subscribe>http://lists.sourceforge.net/mailman/listinfo/jxls-user</subscribe>
-      <unsubscribe>http://lists.sourceforge.net/mailman/listinfo/jxls-user</unsubscribe>
-      <post>mailto:jxls-user@lists.sourceforge.net</post>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum_id=45859</archive>
-    </mailingList>
-    <mailingList>
-      <name>jxls-devel</name>
-      <subscribe>http://lists.sourceforge.net/mailman/listinfo/jxls-devel</subscribe>
-      <unsubscribe>http://lists.sourceforge.net/mailman/listinfo/jxls-devel</unsubscribe>
-      <post>mailto:jxls-devel@lists.sourceforge.net</post>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum_id=46886</archive>
-    </mailingList>
-  </mailingLists>
     <scm>
-        <connection>scm:svn:https://svn.code.sf.net/p/jxls/code/trunk</connection>
-        <developerConnection>scm:svn:https://svn.code.sf.net/p/jxls/code/trunk</developerConnection>
-        <url>https://sourceforge.net/p/jxls/code/330/tree/trunk</url>
+        <connection>scm:git:http://github.com/jxlsteam/jxls-1-legacy.git</connection>
+        <developerConnection>scm:git:https://github.com/jxlsteam/jxls-1-legacy.git</developerConnection>
+        <url>https://github.com/jxlsteam/jxls-1-legacy.git</url>
+        <tag>HEAD</tag>
     </scm>
-  <issueManagement>
-    <system>SourceForge Tracker</system>
-    <url>http://sourceforge.net/tracker/?group_id=141729</url>
-  </issueManagement>
+
   <dependencyManagement>
 	<dependencies>
 		<dependency>
@@ -101,58 +83,41 @@
         <id>jxls.sf.net</id>
         <url>scp://shell.sourceforge.net/home/project-web/jxls/htdocs</url>
       </site>
-
-    <!--<snapshotRepository>-->
-      <!--<id>sourceforge.net</id>-->
-      <!--<name>jXLS Snapshots Repository at Sourceforge</name>-->
-      <!--<url>scp://shell.sourceforge.net/home/groups/j/jx/jxls/htdocs/repository/snapshots</url>-->
-    <!--</snapshotRepository>-->
   </distributionManagement>
 
-    <repositories>
-        <repository>
-            <id>sourceforge</id>
-            <name>jXLS snapshot repository</name>
-            <url>http://jxls.sourceforge.net/repository/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-    </repositories>
-
-
     <build>
+      <pluginManagement>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-site-plugin</artifactId>
+            <version>3.7.1</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+              <source>1.5</source>
+              <target>1.5</target>
+            </configuration>
+          </plugin>
+        </plugins>
+      </pluginManagement>
     <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.6</version>
         <configuration>
           <descriptors>
             <descriptor>src/main/assembly/release.xml</descriptor>
           </descriptors>
         </configuration>
       </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-site-plugin</artifactId>
-        </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+      </plugin>
     </plugins>
   </build>
 
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>mailing-list</report>
-              <report>license</report>
-              <report>scm</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-    </plugins>
-  </reporting>
 </project>

@@ -12,6 +12,8 @@ import net.sf.jxls.util.Util;
 
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.IndexedColors;
 
 /**
  * WARNING! This class does not work since 0.8.7 jXLS release as there were changes in expression parsing introduced
@@ -40,8 +42,8 @@ public class RedCellProcessor2  implements CellProcessor {
                 if (employee.getPayment().doubleValue() >= 2000) {
                         org.apache.poi.ss.usermodel.Cell hssfCell = cell.getPoiCell();
                         CellStyle newStyle = duplicateStyle( cell, property.getPropertyNameAfterLastDot() );
-                        newStyle.setFillForegroundColor( HSSFColor.RED.index );
-                        newStyle.setFillPattern( CellStyle.SOLID_FOREGROUND );
+                        newStyle.setFillForegroundColor(IndexedColors.RED.index);
+                        newStyle.setFillPattern( FillPatternType.SOLID_FOREGROUND );
                         hssfCell.setCellStyle( newStyle );
                 }
             }
