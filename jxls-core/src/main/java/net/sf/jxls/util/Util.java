@@ -1,22 +1,40 @@
 package net.sf.jxls.util;
 
-import net.sf.jxls.transformer.*;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellReference;
-
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
+
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.ConditionalFormatting;
+import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
+import org.apache.poi.ss.usermodel.Footer;
+import org.apache.poi.ss.usermodel.Header;
+import org.apache.poi.ss.usermodel.PrintSetup;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
+
+import net.sf.jxls.transformer.RowCollection;
 
 /**
  * This class contains many utility methods used by jXLS framework
@@ -62,7 +80,7 @@ public final class Util {
     private static void removeRowCollectionPropertyFromCell(org.apache.poi.ss.usermodel.Cell cell,
             String collectionName) {
         String regex = "[-+*/().A-Za-z_0-9\\s]*";
-        if (cell != null && cell.getCellType() == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING) {
+        if (cell != null && cell.getCellType() == CellType.STRING) {
             String cellValue = cell.getRichStringCellValue().getString();
             String strToReplace = "\\$\\{" + regex
                     + collectionName.replaceAll("\\.", "\\\\.") + "\\." + regex
@@ -187,7 +205,7 @@ public final class Util {
 
     private static void prepareCollectionPropertyInCellForDuplication(
             org.apache.poi.ss.usermodel.Cell cell, String collectionName, String collectionItemName) {
-        if (cell != null && cell.getCellType() == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING) {
+        if (cell != null && cell.getCellType() == CellType.STRING) {
             String cellValue = cell.getRichStringCellValue().getString();
             String newValue = replaceCollectionProperty(cellValue,
                     collectionName, collectionItemName);
@@ -367,27 +385,27 @@ public final class Util {
     private static void moveCell(org.apache.poi.ss.usermodel.Cell srcCell, org.apache.poi.ss.usermodel.Cell destCell) {
         destCell.setCellStyle(srcCell.getCellStyle());
         switch (srcCell.getCellType()) {
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING:
+            case STRING:
                 destCell.setCellValue(srcCell.getRichStringCellValue());
                 break;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC:
+            case NUMERIC:
                 destCell.setCellValue(srcCell.getNumericCellValue());
                 break;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK:
-                destCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK);
+            case BLANK:
+                destCell.setCellType(CellType.BLANK);
                 break;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN:
+            case BOOLEAN:
                 destCell.setCellValue(srcCell.getBooleanCellValue());
                 break;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_ERROR:
+            case ERROR:
                 destCell.setCellErrorValue(srcCell.getErrorCellValue());
                 break;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA:
+            case FORMULA:
                 break;
             default:
                 break;
         }
-        srcCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK);
+        srcCell.setCellType(CellType.BLANK);
     }
 
     private static void duplicateStyle(RowCollection rowCollection,
@@ -569,22 +587,22 @@ public final class Util {
             copyConditionalFormat(oldCell, newCell);
         }
         switch (oldCell.getCellType()) {
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING:
+            case STRING:
                 newCell.setCellValue(oldCell.getRichStringCellValue());
                 break;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC:
+            case NUMERIC:
                 newCell.setCellValue(oldCell.getNumericCellValue());
                 break;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK:
-                newCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK);
+            case BLANK:
+                newCell.setCellType(CellType.BLANK);
                 break;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN:
+            case BOOLEAN:
                 newCell.setCellValue(oldCell.getBooleanCellValue());
                 break;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_ERROR:
+            case ERROR:
                 newCell.setCellErrorValue(oldCell.getErrorCellValue());
                 break;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA:
+            case FORMULA:
                 newCell.setCellFormula(oldCell.getCellFormula());
                 break;
             default:
@@ -600,24 +618,24 @@ public final class Util {
             copyConditionalFormat(oldCell, newCell);
         }
         switch (oldCell.getCellType()) {
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING:
+            case STRING:
                 String oldValue = oldCell.getRichStringCellValue().getString();
                 String newValue = replaceExpressions(oldValue, expressionToReplace, expressionReplacement);
                 newCell.setCellValue(newCell.getSheet().getWorkbook().getCreationHelper().createRichTextString(newValue));
                 break;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC:
+            case NUMERIC:
                 newCell.setCellValue(oldCell.getNumericCellValue());
                 break;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK:
-                newCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK);
+            case BLANK:
+                newCell.setCellType(CellType.BLANK);
                 break;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN:
+            case BOOLEAN:
                 newCell.setCellValue(oldCell.getBooleanCellValue());
                 break;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_ERROR:
+            case ERROR:
                 newCell.setCellErrorValue(oldCell.getErrorCellValue());
                 break;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA:
+            case FORMULA:
                 newCell.setCellFormula(oldCell.getCellFormula());
                 break;
             default:
@@ -825,10 +843,11 @@ public final class Util {
                     mergedRegion.getFirstColumn() + destCellNum - cellNum, mergedRegion.getLastColumn() + destCellNum - cellNum);
             if (Util.isNewMergedRegion(newMergedRegion, mergedRegions)) {
                 mergedRegions.add(newMergedRegion);
-                sheet.addMergedRegion(newMergedRegion);
+                //remove old merged region before adding the new region to avoid intersections
                 if (removeSourceMergedRegion) {
-                    removeMergedRegion(sheet, mergedRegion);
+                   removeMergedRegion(sheet, mergedRegion);
                 }
+                sheet.addMergedRegion(newMergedRegion);
             }
         }
     }
@@ -1090,7 +1109,7 @@ public final class Util {
         if (row == null) {
             row = poiSheet.createRow(rowNum.intValue());
         }
-        Cell cell = row.getCell(cellNum.intValue(), org.apache.poi.ss.usermodel.Row.CREATE_NULL_AS_BLANK);
+        Cell cell = row.getCell(cellNum.intValue(), MissingCellPolicy.CREATE_NULL_AS_BLANK);
         return cell;
     }
 }
