@@ -180,7 +180,7 @@ public class XLSFormatterBeanTest extends TestCase {
 		public short fillBackgroundColor;
 		public short fillForegroundColor;
 		public FillPatternType fillPattern;
-		public short fontIndex;
+		public int fontIndex;
 		public boolean hidden;
 		public short indention;
 		public short leftBorderColor;
