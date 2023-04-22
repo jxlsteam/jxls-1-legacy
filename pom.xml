@@ -120,4 +120,7 @@
     </plugins>
   </build>
 
+    <properties>
+    	<poi.version>5.2.3</poi.version>
+    </properties>
 </project>
